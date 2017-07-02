@@ -6770,7 +6770,7 @@ qqqqqq:
                         {
 						grub_printf ("(%s%x%c%c%c%c):", ((drive<10)?"fd":(drive>=0x9f)?"0x":"hd"),((drive<10 || drive>=0x9f)?drive:(drive-0x80)), ((pc_slice==0xff)?'\0':','),((pc_slice==0xff)?'\0' :(pc_slice + '0')), ((bsd_part == 0xFF) ? '\0' : ','), ((bsd_part == 0xFF) ? '\0' : (bsd_part + 'a')));
 						if (*uuid_found || debug)
-							grub_printf("%s%s is \"%s\".\n\t", ((drive<10)?"   ":(drive>=0x9f)?"  ":" "), p, ((*uuid_found) ? uuid_found : "(unsupported)"));
+							grub_printf("%s%s is \"%s\".\n\t", ((drive<10)?"   ":(drive>=0x9f)?"  ":" "), p, ((*uuid_found) ? uuid_found : (flags) ? "(unsupported)" : "no label"));
 						print_fsys_type();
 		          }
                       else if (substring((char*)uuid_found,arg,1) == 0)
