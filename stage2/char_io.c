@@ -677,6 +677,9 @@ add_history (const char *cmdline, int no)
 struct get_cmdline_arg get_cmdline_str;
 static int xpos, lpos, section;
 
+/*finite loop*/
+/*cl_refresh() calls itself*/
+char ft;
 /* The length of PROMPT.  */
 static int plen;
 /* The length of the command-line.  */
@@ -856,6 +859,7 @@ static void cl_refresh (int full, int len)
       unsigned long pos = xpos;
       unsigned long offset = 0;
       unsigned long lpos_fontx;
+      int lplen = strlen((const char*)get_cmdline_str.prompt);
       
       if (full)
 	{
@@ -867,6 +871,57 @@ static void cl_refresh (int full, int len)
 		else
 			gotoxy (0, fonty);
 
+		/*XXX: 2017-06-22 (erol-y)
+ 			There is a bug that Grub4Dos can not handle prompt.
+ 			When it is longer than line limit (CMDLINE_WIDTH), g4d only shows "<".
+		*/
+ 		if (lplen >= CMDLINE_WIDTH && ft)
+ 		{
+ 			ft = 0;
+			short j;
+			short u = 0;
+			/*'u' is a unicode character (2 bytes)
+				'a' is ascii (1 byte)
+				grub_strlen("ua") returns 3.
+				So we should count how many characters there are.
+			*/
+			for(j=0; j < lplen; ++j)
+			{
+				if(get_cmdline_str.prompt[j] > 0x7F)
+						++u;
+			}
+			u /= 2;
+
+			if ((lplen - u) >= CMDLINE_WIDTH)
+			{
+				for(j = 0; j < (CMDLINE_WIDTH + u - 1); ++j)
+						grub_putchar(get_cmdline_str.prompt[j], 255);
+
+				plen = lplen - j;
+				++j;
+				
+				grub_printf("\n");
+				for(; j <= lplen; ++j) //Divide prompt
+						grub_putchar(get_cmdline_str.prompt[j], 255); //Print 1st part
+				
+				grub_memset((void*)get_cmdline_str.prompt, 0, plen+2);
+				grub_memcpy((void*)get_cmdline_str.prompt, 
+										(const void*)(get_cmdline_str.prompt + (lplen-plen)), plen);
+				
+				len -= plen;
++				pos += plen;
+				fontx = plen;
+				cl_refresh(1,0); //Calls itself with new prompt.
+			}
+			else	//Prompt length is over. But, real char count is ok.
+			{
+				grub_printf("%s", get_cmdline_str.prompt);
+				len -= (lplen - u);
+				pos += (lplen - u);
+				plen = (lplen - u);
+				section = 0;
+			}
+ 		}
 	  /* Recompute the section number.  */
 	  if (lpos + plen < len)
 	    {
@@ -901,6 +956,15 @@ static void cl_refresh (int full, int len)
 	  if (! full)	/* the current code use full=1, so always offset=0 */
 	    offset = xpos - 1;
 	  
+	//2017-06-22 (erol-y)
+ 	//Calculating "start" is problematic with long prompt string
+ 	//if prompt's length is between:
+ 	//(CMDLINE_WIDTH - (CMDLINE_MARGIN / 2)) <= prompt < CMDLINE_WIDTH
+	//it acts anormal. This if() is added to check that.
+	//start = section * (CMDLINE_WIDTH - CMDLINE_MARGIN) - plen + (CMDLINE_MARGIN / 2);
+ 	if (plen >= (CMDLINE_WIDTH - (CMDLINE_MARGIN / 2)))
+ 		start = 0;
+ 	else
 	  start = section * (CMDLINE_WIDTH - CMDLINE_MARGIN) - plen + (CMDLINE_MARGIN / 2);
 
 	  xpos = lpos + 1 - start;
