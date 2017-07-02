@@ -811,7 +811,15 @@ valid_filename:
 	}
       
       if (substring (dirname, (char *)utf8, 1) == 0)
-	break;
+      {
+   	 if ((FAT_SUPER->fat_type == 64 && exfat_attrib & 0x10)
+   	     || (FAT_SUPER->fat_type != 64 && FAT_DIRENTRY_ATTRIB (dir_buf) & 0x10))
+   	   is_folder = 1;
+  	  else
+  	    is_folder = 0;
+      
+	  break;
+      }
 	 if (alias_checksum != -1)
 	  {
  		alias_checksum = -1;

@@ -57,6 +57,7 @@ char *err_list[] =
   [ERR_FILELENGTH] = "Filesystem compatibility error, cannot read whole file",
   [ERR_FILENAME_FORMAT] = "The leading DEVICE of the filename to find must be stripped off,\n\tand DIR for set-root must begin in a slash(/).",
   [ERR_FILE_NOT_FOUND] = "File not found",
+  [ERR_NO_FILE_BUT_FOLDER] = "Any file found but there is folder with same name",
   [ERR_FSYS_CORRUPT] = "Inconsistent filesystem structure",
   [ERR_FSYS_MOUNT] = "Cannot mount selected partition",
   [ERR_GEOM] = "Selected cylinder exceeds maximum supported by BIOS",

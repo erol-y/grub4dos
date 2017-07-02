@@ -255,6 +255,7 @@ iso9660_dir (char *dirname)
   idr = &PRIMDESC->root_directory_record;
   idr_udf_105 = (struct udf_descriptor *)UDF_DESC;
   INODE->file_start = 0;
+  is_folder = 0;
 
   do
     {
@@ -331,6 +332,10 @@ iso9660_dir (char *dirname)
 				}
 				name = (char *)utf8;
 				file_type = (idr_udf_101->FileCharacteristics & 2) ? ISO_DIRECTORY : ISO_REGULAR;
+				if (file_type == ISO_DIRECTORY)
+					is_folder = 1;
+				else
+					is_folder = 0;
 			}		
 			else
 			{	      
@@ -340,6 +345,11 @@ iso9660_dir (char *dirname)
 	 			name = (char *)(idr->name);
 
 	      file_type = (idr->flags.l & 2) ? ISO_DIRECTORY : ISO_REGULAR;
+
+		if (file_type == ISO_DIRECTORY)
+			is_folder = 1;
+		else
+			is_folder = 0;
 	    }
 	    if (iso_type != ISO_TYPE_udf)
 			{
@@ -415,6 +425,10 @@ iso9660_dir (char *dirname)
 					      == POSIX_S_IFDIR
 					      ? ISO_DIRECTORY : ISO_OTHER));
 			      rr_flag &= ~RR_FLAG_PX;
+				if (file_type == ISO_DIRECTORY)
++					is_folder = 1;
++				else
++					is_folder = 0;
 			    }
 			  break;
 			case RRMAGIC('C', 'E'):

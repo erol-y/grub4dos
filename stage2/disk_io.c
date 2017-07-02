@@ -42,6 +42,7 @@ static char open_filename[512];
 static unsigned long relative_path;
 
 int print_possibilities;
+unsigned char is_folder;
 
 /* patch about cur_part_start and cur_part_entry was suggested by Icecube:
  *
@@ -2025,6 +2026,7 @@ grub_open (char *filename)
 #endif /* NO_DECOMPRESSION */
 
   errnum = 0;
+  is_folder = 0;
 
   /* if any "dir" function uses/sets filepos, it must
      set it to zero before returning if opening a file! */
@@ -2193,7 +2195,10 @@ not_block_file:
       return 1;
 #endif
     }
-
+		else if(is_folder)
+		{
+			errnum = ERR_NO_FILE_BUT_FOLDER;
+		}
   return 0;
 }
 

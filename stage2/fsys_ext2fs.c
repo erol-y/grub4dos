@@ -1220,6 +1220,11 @@ ext2fs_dir (char *dirname)
 	      //dp->name[dp->name_len] = 0;
 	      str_chk = substring (dirname, tmp_name, 0);
 
+        if (dp->file_type == 2)
+          is_folder = 1;
+        else
+          is_folder = 0;
+
 	      if (print_possibilities && ch != '/'
 		  && (!*dirname || str_chk <= 0))
 		{

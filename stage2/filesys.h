@@ -228,6 +228,7 @@ struct fsys_entry
 };
 
 extern int print_possibilities;
+extern unsigned char is_folder;
 
 extern unsigned long long fsmax;
 extern struct fsys_entry fsys_table[NUM_FSYS + 1];

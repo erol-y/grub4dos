@@ -83,6 +83,7 @@ unsigned long configfile_in_menu_init = 0;
 extern char *mbr /* = (char *)0x8000 */; /* 512-byte buffer for any use. */
 
 extern int dir (char *dirname);
+unsigned char find_folder;
 
 #ifdef SUPPORT_GRAPHICS
 extern int outline;
@@ -5639,7 +5640,7 @@ static int find_check(char *filename,struct builtin *builtin1,char *arg,int flag
 {
 	saved_drive = current_drive;
 	saved_partition = current_partition;
-	if (filename == NULL || (open_device() && grub_open (filename)))
+	if (filename == NULL || (open_device() && grub_open (filename) && (find_folder < 2)))
 	{
 		grub_close ();
 		if (builtin1)
@@ -5663,6 +5664,16 @@ static int find_check(char *filename,struct builtin *builtin1,char *arg,int flag
 		}
 		return 1;
 	}
+	if (find_folder && errnum == ERR_NO_FILE_BUT_FOLDER && (find_folder >= 1))
+	{
+		if (debug > 0)
+		{
+			print_root_device(NULL,0);
+			putchar('\n', 255);
+		}
+		errnum = ERR_NONE;
+		return 1;		
+	}
 
 	errnum = ERR_NONE;
 	return 0;
@@ -5685,6 +5696,7 @@ find_func (char *arg, int flags)
   char find_devices[8]="pnuhcf";//find order:pd->nd->ud->hd->cd->fd
   //char *in_drives = NULL;	/* search in drive list */
 //  char root_found[16];
+  find_folder = 0;
   errnum = 0;
 #ifdef FSYS_FB
   if (saved_drive == FB_DRIVE && !(unsigned char)(fb_status >> 8))
@@ -5726,6 +5738,14 @@ find_func (char *arg, int flags)
 			}
 			find_devices[i] = '\0';
 		}
+		else if (grub_memcmp(arg, "--with-folder", 13) == 0)
+		{
+			find_folder = 1;
+		}
+		else if (grub_memcmp(arg, "--only-folder", 13) == 0)
+		{
+			find_folder = 2;
+		}
 		else
 			break;
     arg = skip_to (0, arg);
@@ -5750,7 +5770,7 @@ find_func (char *arg, int flags)
   if (*arg)
   {
     builtin1 = find_command (arg);
-    if ((int)builtin1 != -1)
+    //if ((int)builtin1 != -1)
     if (! builtin1 || ! (builtin1->flags & flags))
     {
 	errnum = ERR_UNRECOGNIZED;
@@ -5987,6 +6007,8 @@ static struct builtin builtin_find =
   " stop the find immediately and set the device as new root."
   " If the option --ignore-floppies is present, the search will bypass all"
   " floppies. And --ignore-cd will skip (cd)."
+  "--with-folder Folder sensitive searching."
+  "--only-folder Searches only folders instead of files"
 };
 
 

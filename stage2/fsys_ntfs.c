@@ -1230,6 +1230,16 @@ static int list_file(char* cur_mft,char *fn,char *pos)
                       dbg_printf("64-bit MFT number\n");
                       return 0;
                     }
+     
+                  if (valueat(pos,0x48,unsigned long) & ATTR_DIRECTORY)
+                  {
+                    is_folder = 1;
+                    errnum = ERR_NO_FILE_BUT_FOLDER;
+                    return 1;
+                  }
+                  else
+                    is_folder = 0;
+
                   return init_file(cur_mft,valueat(pos,0,unsigned long));
                 }
             }
