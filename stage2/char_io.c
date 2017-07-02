@@ -909,7 +909,7 @@ static void cl_refresh (int full, int len)
 										(const void*)(get_cmdline_str.prompt + (lplen-plen)), plen);
 				
 				len -= plen;
-+				pos += plen;
+				pos += plen;
 				fontx = plen;
 				cl_refresh(1,0); //Calls itself with new prompt.
 			}

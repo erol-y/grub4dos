@@ -426,9 +426,9 @@ iso9660_dir (char *dirname)
 					      ? ISO_DIRECTORY : ISO_OTHER));
 			      rr_flag &= ~RR_FLAG_PX;
 				if (file_type == ISO_DIRECTORY)
-+					is_folder = 1;
-+				else
-+					is_folder = 0;
+					is_folder = 1;
+ 	  		else
+					is_folder = 0;
 			    }
 			  break;
 			case RRMAGIC('C', 'E'):
