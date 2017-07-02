@@ -1227,13 +1227,39 @@ ext2fs_dir (char *dirname)
 		    print_possibilities = -print_possibilities;
 			unsigned long long clo64 = current_color_64bit;
 			unsigned long clo = current_color;	
-			if (dp->file_type == 2)
+			if (dp->file_type == 2) /* dir */
 			{
 				if (current_term->setcolorstate)
 					current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
-				current_color_64bit &= 0x0000000000ffffff;
-				current_color &= 0xf;
+				current_color_64bit &= 0x0000000000C9B100;
+ 				current_color &= 0xa;
 			}
+       else if (dp->file_type == 1) /* file */
+       {
+         if (substring("core.img", dp->name, 1) == 0 
+           || substring("grldr", dp->name, 1) == 0)
+         {
+           if (current_term->setcolorstate)
+             current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
+           current_color_64bit &= 0x00000000008A0228;
+           current_color &= 0x1;
+         }
+         else if (substring("vmlinuz", dp->name, 1) <= 0
+           || substring("initrd", dp->name, 1) <= 0)
+         {
+           if (current_term->setcolorstate)
+             current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
+           current_color_64bit &= 0x0000000000cc57cc;
+           current_color &= 0x2;
+         }
+       }
+       else if (dp->file_type == 7) /* link? */
+       {
+         if (current_term->setcolorstate)
+ 					current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
+ 				current_color_64bit &= 0x00000000001DC6D1;
+ 				current_color &= 0x4;
+       }
 		  print_a_completion (tmp_name, 0);
 			current_color_64bit = clo64;
 			current_color = clo;

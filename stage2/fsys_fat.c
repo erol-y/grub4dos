@@ -778,9 +778,29 @@ valid_filename:
 				{
 					if (current_term->setcolorstate)
 						current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
-						current_color_64bit &= 0x0000000000ffffff;
-						current_color &= 0xf;
+						current_color_64bit &= 0x0000000000C9B100;
+ 						current_color &= 0xa;
 				}
+				else if (substring((char *)utf8, "grldr", 1) == 0
+					|| substring((char *)utf8, "ntldr", 1) == 0
+					|| substring((char *)utf8, "bootmgr", 1) == 0
+					|| substring((char *)utf8, "io.sys", 1) == 0
+					|| substring((char *)utf8, "core.img", 1) == 0
+					|| substring((char *)utf8, "isolinux.bin", 1) == 0)
+				{
+					if (current_term->setcolorstate)
+						current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
+					current_color_64bit &= 0x00000000008A0228;
+					current_color &= 0x1;
+				}
+				else if (substring("vmlinuz", (char *)utf8, 1) <= 0
+           || substring("initrd", (char *)utf8, 1) <= 0)
+					{
+						if (current_term->setcolorstate)
+							current_term->setcolorstate (COLOR_STATE_HIGHLIGHT);
+						current_color_64bit &= 0x0000000000cc57cc;
+						current_color &= 0x2;
+					}
 	      print_a_completion ((char *)utf8, 1);
 				current_color_64bit = clo64;
 				current_color = clo;
