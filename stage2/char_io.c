@@ -913,7 +913,7 @@ static void cl_refresh (int full, int len)
 				fontx = plen;
 				cl_refresh(1,0); //Calls itself with new prompt.
 			}
-			else	//Prompt length is over. But, real char count is ok.
+			else if(lplen >= CMDLINE_WIDTH)	//Prompt length is over. But, real char count is ok.
 			{
 				grub_printf("%s", get_cmdline_str.prompt);
 				len -= (lplen - u);
