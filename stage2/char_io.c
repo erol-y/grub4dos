@@ -894,15 +894,15 @@ static void cl_refresh (int full, int len)
 
 			if ((lplen - u) >= CMDLINE_WIDTH)
 			{
-				for(j = 0; j < (CMDLINE_WIDTH + u - 1); ++j)
-						grub_putchar(get_cmdline_str.prompt[j], 255);
+				for(j = 0; j < (CMDLINE_WIDTH + u - 1); ++j) //Divide prompt
+						grub_putchar(get_cmdline_str.prompt[j], 255); //Print 1st part
 
 				plen = lplen - j;
 				++j;
 				
 				grub_printf("\n");
-				for(; j <= lplen; ++j) //Divide prompt
-						grub_putchar(get_cmdline_str.prompt[j], 255); //Print 1st part
+				//for(; j <= lplen; ++j)
+					//	grub_putchar(get_cmdline_str.prompt[j], 255);
 				
 				grub_memset((void*)get_cmdline_str.prompt, 0, plen+2);
 				grub_memcpy((void*)get_cmdline_str.prompt, 
@@ -923,7 +923,7 @@ static void cl_refresh (int full, int len)
 			}
  		}
 	  /* Recompute the section number.  */
-	  if (lpos + plen < len)
+	 else if (lpos + plen < len)
 	    {
 	      section = 0;
 	      grub_printf ("%s", get_cmdline_str.prompt);
@@ -1166,6 +1166,7 @@ real_get_cmdline (void)
 
   if (fontx)
 	grub_putchar ('\n', 255);
+	ft = 1;
   cl_refresh (1, 0);  /* Print full line and set position here */
 
   if (get_cmdline_str.readline > 1)
